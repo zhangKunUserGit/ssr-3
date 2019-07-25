@@ -4,7 +4,9 @@ const autoprefixer = require('autoprefixer');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const safePostCssParser = require('postcss-safe-parser');
 // const cleanWebpackPlugin = require('clean-webpack-plugin');
+const postcssNormalize = require('postcss-normalize');
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -72,15 +74,13 @@ module.exports = config => {
                     ident: 'postcss',
                     plugins: () => [
                       require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        overrideBrowserslist: [
-                          '>1%',
-                          'last 4 versions',
-                          'Firefox ESR',
-                          'not ie < 9'
-                        ],
-                        flexbox: 'no-2009'
-                      })
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009'
+                        },
+                        stage: 3
+                      }),
+                      postcssNormalize()
                     ],
                     sourceMap: false
                   }
@@ -95,7 +95,10 @@ module.exports = config => {
                   loader: MiniCssExtractPlugin.loader
                 },
                 {
-                  loader: require.resolve('css-loader')
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1
+                  }
                 },
                 {
                   loader: require.resolve('postcss-loader'),
@@ -103,21 +106,18 @@ module.exports = config => {
                     ident: 'postcss',
                     plugins: () => [
                       require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        overrideBrowserslist: [
-                          '>1%',
-                          'last 4 versions',
-                          'Firefox ESR',
-                          'not ie < 9'
-                        ],
-                        flexbox: 'no-2009'
-                      })
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009'
+                        },
+                        stage: 3
+                      }),
+                      postcssNormalize()
                     ],
                     sourceMap: false
                   }
                 }
-              ],
-              sideEffects: false
+              ]
             },
             {
               test: sassRegex,
@@ -135,15 +135,13 @@ module.exports = config => {
                     ident: 'postcss',
                     plugins: () => [
                       require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        overrideBrowserslist: [
-                          '>1%',
-                          'last 4 versions',
-                          'Firefox ESR',
-                          'not ie < 9'
-                        ],
-                        flexbox: 'no-2009'
-                      })
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009'
+                        },
+                        stage: 3
+                      }),
+                      postcssNormalize()
                     ],
                     sourceMap: false
                   }
@@ -174,15 +172,13 @@ module.exports = config => {
                     ident: 'postcss',
                     plugins: () => [
                       require('postcss-flexbugs-fixes'),
-                      autoprefixer({
-                        overrideBrowserslist: [
-                          '>1%',
-                          'last 4 versions',
-                          'Firefox ESR',
-                          'not ie < 9'
-                        ],
-                        flexbox: 'no-2009'
-                      })
+                      require('postcss-preset-env')({
+                        autoprefixer: {
+                          flexbox: 'no-2009'
+                        },
+                        stage: 3
+                      }),
+                      postcssNormalize()
                     ],
                     sourceMap: false
                   }
@@ -193,21 +189,6 @@ module.exports = config => {
                     sourceMap: false
                   }
                 }
-              ]
-            },
-            {
-              test: /\.less/,
-              include: [resolve('src')],
-              use: [
-                MiniCssExtractPlugin.loader,
-                {
-                  loader: 'css-loader',
-                  options: {
-                    modules: true,
-                    localIdentName: '[path][local]-[hash:base64:5]'
-                  }
-                },
-                'less-loader'
               ]
             },
             {
@@ -259,7 +240,15 @@ module.exports = config => {
           parallel: true,
           sourceMap: true // set to true if you want JS source maps
         }),
-        new OptimizeCSSAssetsPlugin({})
+        new OptimizeCSSAssetsPlugin({
+          cssProcessorOptions: {
+            parser: safePostCssParser,
+            map: {
+              inline: false,
+              annotation: false
+            }
+          }
+        })
       ]
     }
   };

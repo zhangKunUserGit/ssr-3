@@ -3,8 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import React from 'react';
 import { Provider } from 'react-redux';
-import 'normalize.css';
-import './global.less';
+import './index.css';
 import createApp from './createApp';
 
 const { router, store } = createApp(window.__INITIAL_STORE__);
