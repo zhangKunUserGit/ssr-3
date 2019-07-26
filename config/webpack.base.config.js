@@ -1,6 +1,46 @@
 const { resolve } = require('./utils');
 const HappyPack = require('happypack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const postcssNormalize = require('postcss-normalize');
+const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+
+const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+const getStyleLoaders = (cssOptions, preProcessor) => {
+  const loaders = [
+    require.resolve('isomorphic-style-loader'),
+    {
+      loader: require.resolve('css-loader'),
+      options: cssOptions
+    },
+    {
+      loader: require.resolve('postcss-loader'),
+      options: {
+        ident: 'postcss',
+        plugins: () => [
+          require('postcss-flexbugs-fixes'),
+          require('postcss-preset-env')({
+            autoprefixer: {
+              flexbox: 'no-2009'
+            },
+            stage: 3
+          }),
+          postcssNormalize()
+        ],
+        sourceMap: false
+      }
+    }
+  ].filter(Boolean);
+  if (preProcessor) {
+    loaders.push({
+      loader: require.resolve(preProcessor),
+      options: {
+        sourceMap: false
+      }
+    });
+  }
+  return loaders;
+};
 
 module.exports = config => {
   return {
@@ -41,6 +81,18 @@ module.exports = config => {
               test: /\.(js|mjs|jsx)$/,
               exclude: [resolve('node_modules')],
               use: ['happypack/loader?id=babel']
+            },
+            {
+              test: sassModuleRegex,
+              use: getStyleLoaders(
+                {
+                  importLoaders: 1,
+                  sourceMap: false,
+                  modules: true,
+                  getLocalIdent: getCSSModuleLocalIdent
+                },
+                'sass-loader'
+              )
             },
             {
               test: /\.html$/,

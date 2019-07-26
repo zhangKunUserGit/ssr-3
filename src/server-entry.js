@@ -2,6 +2,7 @@ import { StaticRouter } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import { renderToString } from 'react-dom/server';
 import { getBundles } from 'react-loadable/webpack';
+import StyleContext from 'isomorphic-style-loader/StyleContext';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { matchRoutes } from 'react-router-config';
@@ -10,7 +11,7 @@ import createApp from './createApp';
 const stats =
   process.env.NODE_ENV === 'production' ? require('../build/react-loadable.json') : null;
 
-export default async (ctx, browserData) => {
+export default async (ctx, browserData, insertCss) => {
   const { router, store, routerConfig } = createApp();
   const matchedRoutes = matchRoutes(routerConfig, ctx.path);
   // 如果没有匹配上路由则返回404
@@ -53,11 +54,13 @@ export default async (ctx, browserData) => {
     ctx.store = store; // 挂载到ctx上，方便渲染到页面上
     const appString = renderToString(
       <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-        <Provider store={store}>
-          <StaticRouter location={ctx.path} context={ctx}>
-            {router}
-          </StaticRouter>
-        </Provider>
+        <StyleContext.Provider value={{ insertCss }}>
+          <Provider store={store}>
+            <StaticRouter location={ctx.path} context={ctx}>
+              {router}
+            </StaticRouter>
+          </Provider>
+        </StyleContext.Provider>
       </Loadable.Capture>
     );
     const bundles = getBundles(stats, modules);

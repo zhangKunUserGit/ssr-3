@@ -6,6 +6,7 @@ const { resolve } = require('./utils');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const safePostCssParser = require('postcss-safe-parser');
 const appEnv = require('./env');
 const env = appEnv('/');
@@ -13,7 +14,45 @@ const config = require('./config')[process.env.NODE_ENV];
 const postcssNormalize = require('postcss-normalize');
 
 const cssRegex = /\.css$/;
+const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
+const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+const getStyleLoaders = (cssOptions, preProcessor) => {
+  const loaders = [
+    require.resolve('isomorphic-style-loader'),
+    {
+      loader: require.resolve('css-loader'),
+      options: cssOptions
+    },
+    {
+      loader: require.resolve('postcss-loader'),
+      options: {
+        ident: 'postcss',
+        plugins: () => [
+          require('postcss-flexbugs-fixes'),
+          require('postcss-preset-env')({
+            autoprefixer: {
+              flexbox: 'no-2009'
+            },
+            stage: 3
+          }),
+          postcssNormalize()
+        ],
+        sourceMap: false
+      }
+    }
+  ].filter(Boolean);
+  if (preProcessor) {
+    loaders.push({
+      loader: require.resolve(preProcessor),
+      options: {
+        sourceMap: false
+      }
+    });
+  }
+  return loaders;
+};
 
 const clientConfig = merge(baseConfig(config), {
   entry: resolve('src/client-entry.js'),
@@ -26,6 +65,7 @@ const clientConfig = merge(baseConfig(config), {
         oneOf: [
           {
             test: cssRegex,
+            exclude: cssModuleRegex,
             use: [
               {
                 loader: MiniCssExtractPlugin.loader
@@ -57,6 +97,7 @@ const clientConfig = merge(baseConfig(config), {
           },
           {
             test: sassRegex,
+            exclude: sassModuleRegex,
             use: [
               {
                 loader: MiniCssExtractPlugin.loader
@@ -78,8 +119,8 @@ const clientConfig = merge(baseConfig(config), {
                         flexbox: 'no-2009'
                       },
                       stage: 3
-                    })
-                    // postcssNormalize()
+                    }),
+                    postcssNormalize()
                   ],
                   sourceMap: false
                 }
@@ -88,7 +129,28 @@ const clientConfig = merge(baseConfig(config), {
                 loader: require.resolve('sass-loader')
               }
             ]
+          },
+          {
+            test: cssModuleRegex,
+            use: getStyleLoaders({
+              importLoaders: 1,
+              sourceMap: false,
+              modules: true,
+              getLocalIdent: getCSSModuleLocalIdent
+            })
           }
+          // {
+          //   test: sassModuleRegex,
+          //   use: getStyleLoaders(
+          //     {
+          //       importLoaders: 1,
+          //       sourceMap: false,
+          //       modules: true,
+          //       getLocalIdent: getCSSModuleLocalIdent
+          //     },
+          //     'sass-loader'
+          //   )
+          // }
         ]
       }
     ]

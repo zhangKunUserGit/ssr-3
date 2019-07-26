@@ -1,10 +1,13 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import serverConnect from '../../../highOrderComponents/serverConnect';
+import withStyles from '../../../highOrderComponents/withStyles';
 import { userLogin } from '../actions/userActions';
 import '../styles/home.scss';
 import { getCurrentSite, getSiteInfo } from '../../../utils/site';
+import s from '../styles/home.module.scss';
 
+@withStyles(s)
 @serverConnect(
   state => {
     return {
@@ -42,6 +45,7 @@ export default class Home extends React.Component {
         <button onClick={this.addUserInfo} className="btn">
           Add User Info
         </button>
+        <span className={s.text}>11122111</span>
         Home page1
       </div>
     );
