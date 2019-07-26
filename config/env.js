@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const paths = require('./paths');
 const getAppConfig = require('./app.config');
+const { getSiteInfo } = require('../server/constants/sites/index');
+const siteAbbrList = require('../server/constants/siteAbbrList');
 
 const appConfig = getAppConfig();
 
@@ -38,6 +40,25 @@ dotenvFiles.forEach(dotenvFile => {
     );
   }
 });
+
+function getLocalSiteName() {
+  const siteConfig = {};
+  if (process.env.NODE_ENV === 'development') {
+    const currentSite = process.argv[process.argv.length - 1];
+    for (let i = 0, l = siteAbbrList.length; i < l; i++) {
+      if (currentSite.toUpperCase() === siteAbbrList[i]) {
+        siteConfig.CURRENT_SITE = siteAbbrList[i];
+        break;
+      }
+    }
+    if (!siteConfig.CURRENT_SITE) {
+      // 默认是HPN
+      siteConfig.CURRENT_SITE = 'HPN';
+    }
+    siteConfig.SITE_INFO = getSiteInfo(siteConfig.CURRENT_SITE);
+  }
+  return siteConfig;
+}
 
 // We support resolving modules according to `NODE_PATH`.
 // This lets you use absolute paths in imports inside large monorepos:
@@ -76,7 +97,8 @@ function getClientEnvironment(publicUrl) {
         // This should only be used as an escape hatch. Normally you would put
         // images into the `src` and `import` them in code to get their paths.
         PUBLIC_URL: publicUrl,
-        ...appConfig
+        ...appConfig,
+        ...getLocalSiteName()
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin

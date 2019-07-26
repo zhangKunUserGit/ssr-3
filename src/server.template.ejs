@@ -7,7 +7,9 @@
   </head>
   <body>
     <script id="initialState">
-      window.__INITIAL_STORE__ = <%%- initialStore %>
+      window.__INITIAL_STORE__ = <%%- initialStore %>;
+      window.__CURRENT_SITE__ = <%%- currentSite %>;
+      window.__SITE_INFO__ = <%%- siteInfo %>;
     </script>
     <div id="root"><%%- appString %></div>
     <%%- bundlesScript %>

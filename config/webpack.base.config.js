@@ -1,17 +1,6 @@
 const { resolve } = require('./utils');
 const HappyPack = require('happypack');
-const autoprefixer = require('autoprefixer');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const safePostCssParser = require('postcss-safe-parser');
-// const cleanWebpackPlugin = require('clean-webpack-plugin');
-const postcssNormalize = require('postcss-normalize');
-
-const cssRegex = /\.css$/;
-const cssModuleRegex = /\.module\.css$/;
-const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 module.exports = config => {
   return {
@@ -58,140 +47,6 @@ module.exports = config => {
               loader: 'html-loader'
             },
             {
-              test: cssModuleRegex,
-              use: [
-                MiniCssExtractPlugin.loader,
-                {
-                  loader: 'css-loader',
-                  options: {
-                    modules: true,
-                    localIdentName: '[path][local]-[hash:base64:5]'
-                  }
-                },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009'
-                        },
-                        stage: 3
-                      }),
-                      postcssNormalize()
-                    ],
-                    sourceMap: false
-                  }
-                }
-              ]
-            },
-            {
-              test: cssRegex,
-              exclude: cssModuleRegex,
-              use: [
-                {
-                  loader: MiniCssExtractPlugin.loader
-                },
-                {
-                  loader: require.resolve('css-loader'),
-                  options: {
-                    importLoaders: 1
-                  }
-                },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009'
-                        },
-                        stage: 3
-                      }),
-                      postcssNormalize()
-                    ],
-                    sourceMap: false
-                  }
-                }
-              ]
-            },
-            {
-              test: sassRegex,
-              exclude: sassModuleRegex,
-              use: [
-                {
-                  loader: MiniCssExtractPlugin.loader
-                },
-                {
-                  loader: require.resolve('css-loader')
-                },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009'
-                        },
-                        stage: 3
-                      }),
-                      postcssNormalize()
-                    ],
-                    sourceMap: false
-                  }
-                },
-                {
-                  loader: require.resolve('sass-loader'),
-                  options: {
-                    sourceMap: false
-                  }
-                }
-              ],
-              sideEffects: false
-            },
-            {
-              test: sassModuleRegex,
-              use: [
-                MiniCssExtractPlugin.loader,
-                {
-                  loader: 'css-loader',
-                  options: {
-                    modules: true,
-                    localIdentName: '[path][local]-[hash:base64:5]'
-                  }
-                },
-                {
-                  loader: require.resolve('postcss-loader'),
-                  options: {
-                    ident: 'postcss',
-                    plugins: () => [
-                      require('postcss-flexbugs-fixes'),
-                      require('postcss-preset-env')({
-                        autoprefixer: {
-                          flexbox: 'no-2009'
-                        },
-                        stage: 3
-                      }),
-                      postcssNormalize()
-                    ],
-                    sourceMap: false
-                  }
-                },
-                {
-                  loader: require.resolve('sass-loader'),
-                  options: {
-                    sourceMap: false
-                  }
-                }
-              ]
-            },
-            {
               test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
               loader: require.resolve('url-loader'),
               options: {
@@ -223,9 +78,6 @@ module.exports = config => {
     // 第三方依赖，可以写在这里，不打包
     externals: {},
     plugins: [
-      new MiniCssExtractPlugin({
-        filename: config.noHash ? 'css/[name].css' : 'css/[name].[chunkhash].css'
-      }),
       new HappyPack({
         id: 'babel',
         loaders: ['babel-loader']
@@ -239,15 +91,6 @@ module.exports = config => {
           cache: true,
           parallel: true,
           sourceMap: true // set to true if you want JS source maps
-        }),
-        new OptimizeCSSAssetsPlugin({
-          cssProcessorOptions: {
-            parser: safePostCssParser,
-            map: {
-              inline: false,
-              annotation: false
-            }
-          }
         })
       ]
     }

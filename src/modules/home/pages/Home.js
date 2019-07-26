@@ -2,6 +2,8 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import serverConnect from '../../../highOrderComponents/serverConnect';
 import { userLogin } from '../actions/userActions';
+import '../styles/home.scss';
+import { getCurrentSite, getSiteInfo } from '../../../utils/site';
 
 @serverConnect(
   state => {
@@ -33,9 +35,13 @@ export default class Home extends React.Component {
   render() {
     console.log(this.props);
     console.log(process.env);
+    console.log(getCurrentSite(), 'getCurrentSite');
+    console.log(getSiteInfo(), 'getSiteInfo');
     return (
       <div>
-        <button onClick={this.addUserInfo}>Add User Info</button>
+        <button onClick={this.addUserInfo} className="btn">
+          Add User Info
+        </button>
         Home page1
       </div>
     );

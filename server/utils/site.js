@@ -2,7 +2,7 @@ const ProdHost = require('../constants/prodHost');
 const DevHost = require('../constants/devHost');
 const TestHost = require('../constants/testHost');
 const { SiteTheme } = require('../constants/siteRelevantAttr');
-const SiteAbbrList = require('../constants/siteAbbrList');
+// const SiteAbbrList = require('../constants/siteAbbrList');
 
 let currentSite = null;
 let hostname = null;
@@ -15,11 +15,16 @@ function getCurrentSite(currentHostname) {
   }
   hostname = currentHostname;
   // 当本地运行时，无法通过host进行判断，根据环境变量进行区分
-  if (hostname === 'localhost:8000') {
-    const arg = process.argv[process.argv.length - 1].toUpperCase();
-    currentSite = SiteAbbrList.indexOf(arg) < 0 ? 'HPN' : arg;
-    return currentSite;
-  }
+  // if (hostname === 'localhost:8000') {
+  //   const arg = process.argv[process.argv.length - 1].toUpperCase();
+  //   currentSite = SiteAbbrList.indexOf(arg) < 0 ? 'HPN' : arg;
+  //   return currentSite;
+  // }
+  // 当本地运行时，无法通过host进行判断，根据环境变量进行区分
+  // if (hostname === 'localhost') {
+  //   currentSite = process.env.CURRENT_SITE;
+  //   return currentSite;
+  // }
   // 其他环境，需要根据host进行判断
   const env = process.env.REACT_APP_ENV;
   // dev

@@ -5,8 +5,12 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import './index.css';
 import createApp from './createApp';
+import { setCurrentSite, setSiteInfo } from './utils/site';
 
 const { router, store } = createApp(window.__INITIAL_STORE__);
+
+setCurrentSite(window.__CURRENT_SITE__);
+setSiteInfo(window.__SITE_INFO__);
 
 if (process.env.NODE_ENV === 'production') {
   Loadable.preloadAll().then(() => {
