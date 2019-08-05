@@ -1,33 +1,148 @@
-.App {
-  text-align: center;
+/* reset css */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video, input, a, textarea{
+  box-sizing: border-box;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
+html{
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+@media only screen and (max-width: 767px){
+  html{
+    font-size: 3.63vw;
+  }
+}
+
+body {
+  font-size:100%;
+  min-width: 985px;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a{
+  text-decoration: none;
+}
+
+ul, li{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* pc 和 mobile */
+.pc-show{
+  display: initial !important;
+}
+.mobile-show, .mobile-show-flex{
+  display: none !important;
+}
+.pc-show-flex{
+  display: flex !important;
+}
+.container{
+  width: 985px;
+  margin: 0 auto;
+}
+
+.prime .container{
+  width: 1200px;
+}
+/* 解决有滚动条时，width:100%,并不能撑满的问题 */
+body.prime{
+  min-width: 1200px;
+}
+/* 设计者恶心之：checkout 宽度不同 */
+.prime.checkout .container{
+  width: 985px;
+}
+/* 解决有滚动条时，width:100%,并不能撑满的问题 */
+body.prime.checkout{
+  min-width: 985px;
+}
+
+@media only screen and (max-width: 767px){
+  .pc-show, .pc-show-flex{
+    display: none !important;
+  }
+  .mobile-show{
+    display: initial !important;
+  }
+  .mobile-show-flex{
+    display: flex !important;
+  }
+  .container, .prime .container, .prime.checkout .container{
+    width: 100%;
+    min-width: 320px;
+  }
+  body, body.prime, body.prime.checkout{
+    min-width: auto;
+  }
+}
+
+/* 弹性布局 */
+.flex-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.flex-col{
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: normal;
 }
-
-.App-link {
-  color: #61dafb;
+.flex-row.flex-row-reverse{
+  flex-direction: row-reverse;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.row-left{
+  justify-content: flex-start;
+}
+.row-center{
+  justify-content: center;
+}
+.row-right{
+  justify-content: flex-end;
+}
+.row-between{
+  justify-content: space-between;
+}
+.col-top{
+  align-items: flex-start;
+}
+.col-center{
+  align-items: center;
+}
+.col-bottom{
+  align-items: flex-end;
+}
+.flex-1{
+  flex: 1;
+}
+.flex-2{
+  flex: 2;
+}
+.flex-3{
+  flex: 3;
+}
+.flex-4{
+  flex: 4;
+}
+.flex-5{
+  flex: 5;
+}
+.flex-6{
+  flex: 6;
+}
+.flex-wrap{
+  flex-wrap: wrap;
+}
+.flex-row.flex-row-reverse{
+  flex-direction: row-reverse;
 }

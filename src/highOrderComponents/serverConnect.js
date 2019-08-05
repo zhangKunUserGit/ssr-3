@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getCurrentSite, getSiteInfo } from '../utils/site';
 
 // 公共部分，在Node环境中无window document navigator 等对象
 if (typeof window === 'undefined') {
@@ -15,14 +16,18 @@ export default function serverConnect(...params) {
   const mapStateToProps = params[0];
   const mapStateToDispatch = params[1];
   return WrappedComponent => {
+    let currentSite = getCurrentSite();
+    let siteInfo = getSiteInfo();
     class App extends Component {
       static serverBootstrapper(store, match, browserData) {
         const methods = mapStateToDispatch(store.dispatch);
+        currentSite = browserData.currentSite;
+        siteInfo = browserData.siteInfo;
         return WrappedComponent.serverBootstrapper(methods, match, browserData);
       }
 
       render() {
-        return <WrappedComponent {...this.props} />;
+        return <WrappedComponent {...this.props} currentSite={currentSite} siteInfo={siteInfo} />;
       }
     }
     return connect(

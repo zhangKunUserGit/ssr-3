@@ -47,33 +47,37 @@ export default async (ctx, browserData, insertCss) => {
         .filter(component => component.serverBootstrapper)
         .map(component => component.serverBootstrapper(store, { query: ctx.query }, browserData));
     } catch (e) {
-      console.log(e);
+      console.log(e, 'eeeeeee');
     }
     const modules = [];
     await Promise.all(promises);
     ctx.store = store; // 挂载到ctx上，方便渲染到页面上
-    const appString = renderToString(
-      <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-        <StyleContext.Provider value={{ insertCss }}>
-          <Provider store={store}>
-            <StaticRouter location={ctx.path} context={ctx}>
-              {router}
-            </StaticRouter>
-          </Provider>
-        </StyleContext.Provider>
-      </Loadable.Capture>
-    );
-    const bundles = getBundles(stats, modules);
-    const scripts = bundles.filter(bundle => bundle.file.endsWith('.js'));
-    const scriptMarkups = scripts
-      .map(bundle => {
-        return `<script src="/js/${bundle.file}"></script>`;
-      })
-      .join('\n');
-    return {
-      appString,
-      scriptMarkups
-    };
+    try {
+      const appString = renderToString(
+        <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+          <StyleContext.Provider value={{ insertCss }}>
+            <Provider store={store}>
+              <StaticRouter location={ctx.path} context={ctx}>
+                {router}
+              </StaticRouter>
+            </Provider>
+          </StyleContext.Provider>
+        </Loadable.Capture>
+      );
+      const bundles = getBundles(stats, modules);
+      const scripts = bundles.filter(bundle => bundle.file.endsWith('.js'));
+      const scriptMarkups = scripts
+        .map(bundle => {
+          return `<script src="/js/${bundle.file}"></script>`;
+        })
+        .join('\n');
+      return {
+        appString,
+        scriptMarkups
+      };
+    } catch (e) {
+      console.log(e, 'xxxx');
+    }
   } else {
     promises = matchedRoutes
       .filter(item => item.route.component.serverBootstrapper)

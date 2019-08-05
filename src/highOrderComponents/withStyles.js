@@ -5,6 +5,10 @@ export default function serverConnect(...params) {
   const styles = params[0];
   return WrappedComponent => {
     class App extends Component {
+      static serverBootstrapper(store, match, browserData) {
+        return WrappedComponent.serverBootstrapper(store, match, browserData);
+      }
+
       render() {
         return <WrappedComponent {...this.props} />;
       }
